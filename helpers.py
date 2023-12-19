@@ -1,3 +1,8 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import cv2
+import torch
+
 def rgb_to_ohe_mask(rgb_mask, colorcodes):
     """
     Converts an RGB mask to a one-hot encoded (OHE) mask.
