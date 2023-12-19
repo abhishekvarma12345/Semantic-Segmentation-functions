@@ -79,13 +79,14 @@ def plot_images_masks(images, masks):
     plt.tight_layout()
     plt.show()
 
-def plot_masks(model, dataloader):
+def plot_masks(model, dataloader, device=None):
     """
     Plots the true and predicted masks for a batch of images from a data loader.
 
     Parameters:
     model (torch.nn.Module): The PyTorch model to use for prediction.
     dataloader (torch.utils.data.DataLoader): The data loader providing the batches of images and true masks.
+    device (torch.device, optional): The device on which the model and data are. If not provided, it will use the device of the model.
 
     This function sets the model to evaluation mode and disables gradient tracking. It then retrieves a batch of images and true masks from the data loader and uses the model to predict the masks for the images. The function plots the true and predicted masks for each image in the batch. The true and predicted masks are displayed side by side for easy comparison. The function assumes that the model and data loader are compatible and that the model is on the same device as the images.
     """
@@ -102,4 +103,5 @@ def plot_masks(model, dataloader):
                 ax[1].imshow(pred_masks[j].argmax(dim=0).unsqueeze(dim=2).cpu())  # Plot the predicted mask
                 ax[1].title.set_text('Predicted Mask')
                 plt.show()
+
 
