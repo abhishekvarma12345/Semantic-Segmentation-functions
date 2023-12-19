@@ -12,7 +12,8 @@ def rgb_to_ohe_mask(rgb_mask, colorcodes):
     colorcodes (list): A list of color codes. Each color code is a list of three integers representing an RGB color.
 
     Returns:
-    numpy.ndarray: A 3D array representing the OHE mask. The third dimension has length equal to the number of color codes. Each slice along the third dimension is a binary mask corresponding to one color code.
+    numpy.ndarray: A 3D array representing the OHE mask. The third dimension has length equal to the number of color codes. 
+    Each slice along the third dimension is a binary mask corresponding to one color code.
     """
     output_mask = []
 
@@ -35,7 +36,8 @@ def find_unique_values(mask_paths):
     Returns:
     list: A sorted list of unique RGB color values present in the image masks. Each color value is represented as a tuple of three integers.
 
-    This function reads each image mask using OpenCV, converts it from BGR to RGB color space, and then finds the unique color values in the mask. The unique color values from all masks are collected in a set to remove duplicates. Finally, the function returns a sorted list of unique color values.
+    This function reads each image mask using OpenCV, converts it from BGR to RGB color space, and then finds the unique color values in the mask. 
+    The unique color values from all masks are collected in a set to remove duplicates. Finally, the function returns a sorted list of unique color values.
     """
     unique_values = set()
 
@@ -57,7 +59,9 @@ def plot_images_masks(images, masks):
     images (torch.Tensor): A 4D tensor containing a batch of images. The dimensions should be (batch_size, height, width, channels).
     masks (torch.Tensor): A 4D tensor containing a batch of masks. The dimensions should be (batch_size, num_classes, height, width).
 
-    This function assumes that the input images and masks are PyTorch tensors. It converts these tensors to numpy arrays for plotting. The function creates a 2x8 grid of subplots, where the top row displays the images and the bottom row displays the corresponding masks. Each mask is created by taking the argmax over the class dimension of the mask tensor. The function uses matplotlib for plotting.
+    This function assumes that the input images and masks are PyTorch tensors. It converts these tensors to numpy arrays for plotting. 
+    The function creates a 2x8 grid of subplots, where the top row displays the images and the bottom row displays the corresponding masks. 
+    Each mask is created by taking the argmax over the class dimension of the mask tensor. The function uses matplotlib for plotting.
     """
     # Assuming images and masks are PyTorch tensors
     # Convert tensors to numpy arrays for plotting
@@ -88,7 +92,10 @@ def plot_masks(model, dataloader, device=None):
     dataloader (torch.utils.data.DataLoader): The data loader providing the batches of images and true masks.
     device (torch.device, optional): The device on which the model and data are. If not provided, it will use the device of the model.
 
-    This function sets the model to evaluation mode and disables gradient tracking. It then retrieves a batch of images and true masks from the data loader and uses the model to predict the masks for the images. The function plots the true and predicted masks for each image in the batch. The true and predicted masks are displayed side by side for easy comparison. The function assumes that the model and data loader are compatible and that the model is on the same device as the images.
+    This function sets the model to evaluation mode and disables gradient tracking. It then retrieves a batch of images and true masks from the data loader and uses the model to predict the masks for the images. 
+    The function plots the true and predicted masks for each image in the batch. 
+    The true and predicted masks are displayed side by side for easy comparison. 
+    The function assumes that the model and data loader are compatible and that the model is on the same device as the images.
     """
     model.eval()  # Set the model to evaluation mode
     with torch.no_grad():  # No need to track gradients
