@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
+import random
 import torch
 
 def mask_encoding(mask_path, color_maps, one_hot_encoded=False):
@@ -71,9 +72,6 @@ def plot_random_masks(mask_paths, color_maps, num_masks=5):
     # Show the plots
     plt.tight_layout()
     plt.show()
-
-
-
 
 def find_unique_values(mask_paths):
     """
