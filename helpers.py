@@ -103,11 +103,14 @@ def plot_images_masks(images, masks, one_hot_encoded=None):
 
     Parameters:
     images (torch.Tensor): A 4D tensor containing a batch of images. The dimensions should be (batch_size, height, width, channels).
-    masks (torch.Tensor): A 4D tensor containing a batch of masks. The dimensions should be (batch_size, num_classes, height, width).
+    masks (torch.Tensor): A 4D tensor containing a batch of masks. The dimensions should be (batch_size, num_classes, height, width) if one_hot_encoded is True, 
+                          otherwise the dimensions should be (batch_size, height, width).
+    one_hot_encoded (bool, optional): If True, the function assumes that the masks are one-hot encoded and takes the argmax over the class dimension for plotting. 
+                                      If False or None, the function directly plots the masks. Default is None.
 
     This function assumes that the input images and masks are PyTorch tensors. It converts these tensors to numpy arrays for plotting. 
     The function creates a 2x8 grid of subplots, where the top row displays the images and the bottom row displays the corresponding masks. 
-    Each mask is created by taking the argmax over the class dimension of the mask tensor. The function uses matplotlib for plotting.
+    The function uses matplotlib for plotting.
     """
     # Assuming images and masks are PyTorch tensors
     # Convert tensors to numpy arrays for plotting
@@ -122,15 +125,16 @@ def plot_images_masks(images, masks, one_hot_encoded=None):
 
         # Create a color map for the mask
         if one_hot_encoded:
-          mask = torch.argmax(masks[i], dim=0).numpy()
+            mask = torch.argmax(masks[i], dim=0).numpy()
         else:
-          mask = masks[i].permute(1, 2, 0).numpy()
+            mask = masks[i].numpy()
         axs[1, i].imshow(mask)
         axs[1, i].axis('off')
         axs[1, i].set_title(f'Mask {i+1}')
 
     plt.tight_layout()
     plt.show()
+
 
 def plot_masks(model, dataloader, device=None):
     """
