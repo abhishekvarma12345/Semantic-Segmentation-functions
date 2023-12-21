@@ -36,6 +36,43 @@ def mask_encoding(mask_path, color_maps, one_hot_encoded=False):
 
     return output_mask
 
+def plot_random_masks(mask_paths, color_maps, num_masks=5):
+    """
+    Plots original masks and their corresponding label masks for a random selection of mask paths.
+
+    Parameters:
+    mask_paths (list): A list of paths to the mask images.
+    color_maps (dict): A dictionary mapping RGB tuples to labels. Each key is a tuple representing an RGB color, 
+                       and each value is a tuple where the first element is the label for that color.
+    num_masks (int, optional): The number of masks to plot. Default is 5.
+
+    Returns:
+    None. This function shows the plots using matplotlib's plt.show() function.
+    """
+    # Select a random subset of the mask paths
+    selected_paths = random.sample(mask_paths, num_masks)
+    # Create a figure for the plots
+    fig, axs = plt.subplots(num_masks, 2, figsize=(10, num_masks*5))
+    
+    for i, mask_path in enumerate(selected_paths):
+        # Convert the mask to labels
+        label_mask = mask_encoding(mask_path, color_maps)
+        
+        # Load the original mask
+        BGR_mask = cv2.imread(mask_path, cv2.IMREAD_COLOR)
+        RGB_mask = cv2.cvtColor(BGR_mask, cv2.COLOR_BGR2RGB)
+        
+        # Plot the original mask and the label mask
+        axs[i, 0].imshow(RGB_mask)
+        axs[i, 0].set_title(f'Original Mask \n shape: {RGB_mask.shape}')
+        axs[i, 1].imshow(label_mask)
+        axs[i, 1].set_title(f'Label Mask \n shape: {label_mask.shape}')
+    
+    # Show the plots
+    plt.tight_layout()
+    plt.show()
+
+
 
 
 def find_unique_values(mask_paths):
