@@ -97,7 +97,7 @@ def find_unique_values(mask_paths):
 
     return sorted(list(unique_values))
 
-def plot_images_masks(images, masks):
+def plot_images_masks(images, masks, one_hot_encoded=None):
     """
     Plots a batch of images and their corresponding masks.
 
@@ -121,7 +121,10 @@ def plot_images_masks(images, masks):
         axs[0, i].set_title(f'Image {i+1}')
 
         # Create a color map for the mask
-        mask = torch.argmax(masks[i], dim=0).numpy()
+        if one_hot_encoded:
+          mask = torch.argmax(masks[i], dim=0).numpy()
+        else:
+          mask = masks[i].permute(1, 2, 0).numpy()
         axs[1, i].imshow(mask)
         axs[1, i].axis('off')
         axs[1, i].set_title(f'Mask {i+1}')
