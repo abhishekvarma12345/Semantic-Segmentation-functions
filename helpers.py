@@ -4,12 +4,12 @@ import cv2
 import random
 import torch
 
-def mask_encoding(mask_path, color_maps, one_hot_encoded=False):
+def mask_encoding(RGB_mask, color_maps, one_hot_encoded=False):
     """
-    Encodes a mask image into a label mask or a one-hot encoded mask based on a color map.
+    Encodes a mask into a label mask or a one-hot encoded mask based on a color map.
 
     Parameters:
-    mask_path (str): Path to the mask image file.
+    RGB_mask (np.ndarray): The mask to be encoded. It should be a 3D NumPy array where each element is an RGB tuple.
     color_maps (dict): A dictionary mapping RGB tuples to labels. Each key is a tuple representing an RGB color, 
                        and each value is a tuple where the first element is the label for that color.
     one_hot_encoded (bool): If True, the function returns a one-hot encoded mask. If False, the function returns a label mask. 
@@ -19,8 +19,6 @@ def mask_encoding(mask_path, color_maps, one_hot_encoded=False):
     output_mask (np.ndarray): If one_hot_encoded is False, returns a 2D NumPy array where each element is the label of the corresponding pixel in the input image. 
                               If one_hot_encoded is True, returns an array of 2D boolean arrays representing a one-hot encoded mask.
     """
-    BGR_mask = cv2.imread(mask_path, cv2.IMREAD_COLOR)
-    RGB_mask = cv2.cvtColor(BGR_mask, cv2.COLOR_BGR2RGB)
     output_mask = []
     if one_hot_encoded:
         ohe_mask = []
@@ -33,6 +31,7 @@ def mask_encoding(mask_path, color_maps, one_hot_encoded=False):
         for rgb, (label, _) in color_maps.items():
             match_mask = (RGB_mask == np.array(rgb)).all(axis=-1)
             label_mask[match_mask] = label
+        label_mask = np.expand_dims(label_mask, axis=2)
         output_mask = label_mask
 
     return output_mask
