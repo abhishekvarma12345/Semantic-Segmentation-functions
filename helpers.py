@@ -3,25 +3,37 @@ import matplotlib.pyplot as plt
 import cv2
 import torch
 
-def rgb_to_ohe_mask(rgb_mask, colorcodes):
+def mask_encoding(mask_path, color_maps, one_hot_encoded=False):
     """
-    Converts an RGB mask to a one-hot encoded (OHE) mask.
+    Encodes a mask image into a label mask or a one-hot encoded mask based on a color map.
 
     Parameters:
-    rgb_mask (numpy.ndarray): An input mask in RGB format. It is a 3D array where the third dimension represents the RGB channels.
-    colorcodes (list): A list of color codes. Each color code is a list of three integers representing an RGB color.
+    mask_path (str): Path to the mask image file.
+    color_maps (dict): A dictionary mapping RGB tuples to labels. Each key is a tuple representing an RGB color, 
+                       and each value is a tuple where the first element is the label for that color.
+    one_hot_encoded (bool): If True, the function returns a one-hot encoded mask. If False, the function returns a label mask. 
+                            Default is False.
 
     Returns:
-    numpy.ndarray: A 3D array representing the OHE mask. The third dimension has length equal to the number of color codes. 
-    Each slice along the third dimension is a binary mask corresponding to one color code.
+    output_mask (np.ndarray): If one_hot_encoded is False, returns a 2D NumPy array where each element is the label of the corresponding pixel in the input image. 
+                              If one_hot_encoded is True, returns an array of 2D boolean arrays representing a one-hot encoded mask.
     """
+    BGR_mask = cv2.imread(mask_path, cv2.IMREAD_COLOR)
+    RGB_mask = cv2.cvtColor(BGR_mask, cv2.COLOR_BGR2RGB)
     output_mask = []
+    if one_hot_encoded:
+        ohe_mask = []
+        for rgb, (label, _) in color_maps.items():
+            cmap = np.all(np.equal(RGB_mask, rgb), axis=-1)
+            ohe_mask.append(cmap)
+        output_mask = np.array(ohe_mask, dtype=np.int32)
+    else:
+        label_mask = np.zeros(RGB_mask.shape[:2], dtype=np.int32)
+        for rgb, (label, _) in color_maps.items():
+            match_mask = (RGB_mask == np.array(rgb)).all(axis=-1)
+            label_mask[match_mask] = label
+        output_mask = label_mask
 
-    for color in colorcodes:
-        cmap = np.all(np.equal(rgb_mask, color), axis=-1)
-        output_mask.append(cmap)
-
-    output_mask = np.stack(output_mask, axis=-1)
     return output_mask
 
 
