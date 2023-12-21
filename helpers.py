@@ -127,7 +127,7 @@ def plot_images_masks(images, masks, one_hot_encoded=None):
         if one_hot_encoded:
             mask = torch.argmax(masks[i], dim=0).numpy()
         else:
-            mask = masks[i].numpy()
+            mask = masks[i].permute(1, 2, 0).numpy() # 2D array of labels with an extra dimension
         axs[1, i].imshow(mask)
         axs[1, i].axis('off')
         axs[1, i].set_title(f'Mask {i+1}')
