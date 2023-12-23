@@ -135,15 +135,15 @@ def plot_images_masks(images, masks, one_hot_encoded=None):
     plt.tight_layout()
     plt.show()
 
-
-def plot_masks(model, dataloader, device=None):
+def plot_predictions(model, dataloader, device=None, one_hot_encoded=False):
     """
     Plots the true and predicted masks for a batch of images from a data loader.
 
     Parameters:
-    model (torch.nn.Module): The PyTorch model to use for prediction.
-    dataloader (torch.utils.data.DataLoader): The data loader providing the batches of images and true masks.
-    device (torch.device, optional): The device on which the model and data are. If not provided, it will use the device of the model.
+    model (torch.nn.Module): The PyTorch model to use for prediction. The model should output a mask for each input image.
+    dataloader (torch.utils.data.DataLoader): The data loader providing the batches of images and true masks. Each batch should be a tuple of two elements: a tensor of images and a tensor of corresponding true masks.
+    device (torch.device, optional): The device on which the model and data are. If not provided, it will use the device of the model. This can be either a CPU or a GPU device.
+    one_hot_encoded (bool, optional): A flag indicating whether the true masks are one-hot encoded. If True, the function will convert the one-hot encoded masks to label-encoded masks for plotting. Default is False.
 
     This function sets the model to evaluation mode and disables gradient tracking. It then retrieves a batch of images and true masks from the data loader and uses the model to predict the masks for the images. 
     The function plots the true and predicted masks for each image in the batch. 
@@ -157,11 +157,21 @@ def plot_masks(model, dataloader, device=None):
                 break
             pred_masks = model(images.to(device))  # Forward pass to get the predicted masks
             for j in range(images.size(0)):  # For each image in the batch
-                fig, ax = plt.subplots(1, 2)  # Create a new figure with two subplots
-                ax[0].imshow(true_masks[j].argmax(dim=0).unsqueeze(dim=2).numpy())  # Plot the true mask
-                ax[0].title.set_text('True Mask')
-                ax[1].imshow(pred_masks[j].argmax(dim=0).unsqueeze(dim=2).cpu())  # Plot the predicted mask
-                ax[1].title.set_text('Predicted Mask')
+                fig, ax = plt.subplots(1, 3)  # Create a new figure with two subplots
+                ax[0].imshow(images[j].permute(1, 2, 0).numpy())  # Plot the original image
+                ax[0].title.set_text('Image')
+                ax[0].axis('off')  # Turn off axis ticks
+                if one_hot_encoded:
+                  ax[1].imshow(true_masks[j].argmax(dim=0).unsqueeze(dim=2).numpy())  # Plot the true ohe mask
+                  ax[1].title.set_text('True Mask')
+                else:
+                  ax[1].imshow(true_masks[j].permute(1, 2, 0).numpy())  # Plot the true labelled mask
+                  ax[1].title.set_text('True Mask')
+                ax[1].axis('off')  # Turn off axis ticks
+                ax[2].imshow(pred_masks[j].argmax(dim=0).unsqueeze(dim=2).cpu())  # Plot the predicted mask
+                ax[2].title.set_text('Predicted Mask')
+                ax[2].axis('off')  # Turn off axis ticks
+                plt.tight_layout()
                 plt.show()
 
 
